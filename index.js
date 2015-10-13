@@ -42,7 +42,7 @@ var tttapi = {
         Authorization: 'Token token=' + token
       },
       dataType: 'json'
-      }, callback);
+    }, callback);
   },
 
   createGame: function (token, callback) {
