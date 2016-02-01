@@ -8,36 +8,38 @@
   <script type="text/javascript" src="index.js" defer charset="utf-8"></script>
 </head>
 <body>
-  <form id="register">
-    <input name="email" type="text" placeholder="email">
-    <input name="password" type="password" placeholder="password">
-    <input name="password_confirmation" type="password" placeholder="password confirmation">
+  <form id="sign-up">
+    <label>E-mail
+      <input name="credentials[email]" type="text" placeholder="email">
+    </label>
+    <label>Password
+    <input name="credentials[password]" type="password" placeholder="password">
+    </label>
+    <label>Password Confirmation
+    <input name="credentials[password_confirmation]" type="password" placeholder="password confirmation">
+    </label>
     <input name="register" type="submit" value="Register">
   </form>
-  <form id="login">
-    <input name="email" type="text" placeholder="email">
-    <input name="password" type="password" placeholder="password">
+  <form id="sign-in">
+    <input name="credentials[email]" type="text" placeholder="email">
+    <input name="credentials[password]" type="password" placeholder="password">
     <input name="login" type="submit" value="Login">
   </form>
   <form id="list-games">
     <input name="list-games" type="submit" value="List Games">
-    <input class="token" name="token" type="hidden">
   </form>
   <form id="create-game">
     <input name="create-game" type="submit" value="Create Game">
-    <input class="token" name="token" type="hidden">
   </form>
   <form id="show-game">
     <label for="show-id">Id:</label>
     <input id="show-id" type="text" size="4">
     <input name="show-game" type="submit" value="Show Game">
-    <input class="token" name="token" type="hidden">
  </form>
   <form id="join-game">
     <label for="join-id">Id:</label>
     <input id="join-id" type="text" size="4">
     <input name="join-game" type="submit" value="Join Game">
-    <input class="token" name="token" type="hidden">
  </form>
  <form id="mark-cell">
     <label for="mark-id">Id:</label>
