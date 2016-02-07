@@ -3,7 +3,7 @@ let token = null;
 
 var tttapi = {
   gameWatcher: null,
-  ttt: 'http://localhost:3000',
+  ttt: 'http://tic-tac-toe.wdibos.com',
 
   ajax: function ajax(config, cb) {
     $.ajax(config).done(function(data, textStatus, jqxhr) {
@@ -47,7 +47,7 @@ var tttapi = {
     }, callback);
   },
 
-  createGame: function (data, token, callback) {
+  createGame: function(data, token, callback) {
     this.ajax({
       method: 'POST',
       url: this.ttt + '/games',
@@ -60,7 +60,7 @@ var tttapi = {
     }, callback);
   },
 
-  showGame: function (id, token, callback) {
+  showGame: function(id, token, callback) {
     this.ajax({
       method: 'GET',
       url: this.ttt + '/games/' + id,
@@ -70,7 +70,7 @@ var tttapi = {
     }, callback);
   },
 
-  joinGame: function (id, data, token, callback) {
+  joinGame: function(id, data, token, callback) {
     this.ajax({
       method: 'PATCH',
       url: this.ttt + '/games/' + id,
@@ -96,7 +96,7 @@ var tttapi = {
     }, callback);
   },
 
-  watchGame: function (id, token) {
+  watchGame: function(id, token) {
     var url = this.ttt + '/games/' + id + '/watch';
     var auth = {
       Authorization: 'Token token=' + token,
@@ -151,23 +151,21 @@ $(function() {
   });
 
   $('#show-game').on('submit', function(e) {
-    var id = $('#show-id').val();
     e.preventDefault();
+    var id = $('#show-id').val();
     tttapi.showGame(id, token, callback);
   });
 
   $('#join-game').on('submit', function(e) {
-    var token = $(this).children('[name="token"]').val();
-    var id = $('#join-id').val();
     e.preventDefault();
-    tttapi.joinGame(id, token, callback);
+    var id = $('#join-id').val();
+    tttapi.joinGame(id, new FormData(), token, callback);
   });
 
   $('#mark-cell').on('submit', function(e) {
-    var token = $(this).children('[name="token"]').val();
-    var id = $('#mark-id').val();
-    var data = wrap('game', wrap('cell', form2object(this)));
     e.preventDefault();
+    var id = $(e.target).find('[name="id"]').val();
+    let data = new FormData(e.target);
     tttapi.markCell(id, data, token, callback);
   });
 

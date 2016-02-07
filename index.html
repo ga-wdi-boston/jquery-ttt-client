@@ -42,12 +42,15 @@
     <input name="join-game" type="submit" value="Join Game">
  </form>
  <form id="mark-cell">
-    <label for="mark-id">Id:</label>
-    <input id="mark-id" type="text" size="4">
-    <label for="mark-index">Index:</label>
-    <input name="index" id="mark-index" type="text" size="4">
-    <label for="mark-value">Value:</label>
-    <input name="value" id="mark-value" type="text" size="4">
+    <label>Id:
+      <input name="id" type="text" size="4">
+    </label>
+    <label>Index:
+      <input name="game[cell][index]" type="text" size="4">
+    </label>
+    <label>Value:
+      <input name="game[cell][value]" type="text" size="4">
+    </label>
     <input name="mark-cell" type="submit" value="Mark Cell">
     <input class="token" name="token" type="hidden">
   </form>
