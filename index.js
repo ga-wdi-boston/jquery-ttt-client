@@ -3,13 +3,18 @@ let token = null;
 
 var tttapi = {
   gameWatcher: null,
+
   ttt: 'http://tic-tac-toe.wdibos.com',
 
+  // ttt: 'https://aqueous-atoll-85096.herokuapp.com',
+
+  // ttt: 'http://localhost:4741',
+
   ajax: function ajax(config, cb) {
-    $.ajax(config).done(function(data, textStatus, jqxhr) {
+    $.ajax(config).done(function (data, textStatus, jqxhr) {
       cb(null, data);
-    }).fail(function(jqxhr, status, error) {
-      cb({ jqxher: jqxhr, status: status, error: error });
+    }).fail(function (jqxhr, status, error) {
+      cb({ jqxhr, status, error });
     });
   },
 
@@ -47,7 +52,7 @@ var tttapi = {
     }, callback);
   },
 
-  createGame: function(data, token, callback) {
+  createGame: function (data, token, callback) {
     this.ajax({
       method: 'POST',
       url: this.ttt + '/games',
@@ -60,7 +65,7 @@ var tttapi = {
     }, callback);
   },
 
-  showGame: function(id, token, callback) {
+  showGame: function (id, token, callback) {
     this.ajax({
       method: 'GET',
       url: this.ttt + '/games/' + id,
@@ -70,7 +75,7 @@ var tttapi = {
     }, callback);
   },
 
-  joinGame: function(id, data, token, callback) {
+  joinGame: function (id, data, token, callback) {
     this.ajax({
       method: 'PATCH',
       url: this.ttt + '/games/' + id,
@@ -83,7 +88,7 @@ var tttapi = {
     }, callback);
   },
 
-  markCell: function(id, data, token, callback) {
+  markCell: function (id, data, token, callback) {
     this.ajax({
       method: 'PATCH',
       url: this.ttt + '/games/' + id,
@@ -96,7 +101,7 @@ var tttapi = {
     }, callback);
   },
 
-  watchGame: function(id, token) {
+  watchGame: function (id, token) {
     var url = this.ttt + '/games/' + id + '/watch';
     var auth = {
       Authorization: 'Token token=' + token,
@@ -107,7 +112,7 @@ var tttapi = {
 };
 
 //$(document).ready(...
-$(function() {
+$(function () {
   const callback = function callback(error, data) {
     if (error) {
       console.error(error);
@@ -118,13 +123,13 @@ $(function() {
     $('#result').val(JSON.stringify(data, null, 4));
   };
 
-  $('#sign-up').on('submit', function(e) {
+  $('#sign-up').on('submit', function (e) {
     let credentials = new FormData(e.target);
     tttapi.register(credentials, callback);
     e.preventDefault();
   });
 
-  $('#sign-in').on('submit', function(e) {
+  $('#sign-in').on('submit', function (e) {
     var credentials = new FormData(e.target);
     var cb = function cb(error, data) {
       if (error) {
@@ -140,57 +145,71 @@ $(function() {
     tttapi.login(credentials, cb);
   });
 
-  $('#list-games').on('submit', function(e) {
+  $('#list-games').on('submit', function (e) {
     e.preventDefault();
     tttapi.listGames(token, callback);
   });
 
-  $('#create-game').on('submit', function(e) {
+  $('#create-game').on('submit', function (e) {
     e.preventDefault();
     tttapi.createGame(new FormData(), token, callback);
   });
 
-  $('#show-game').on('submit', function(e) {
+  $('#show-game').on('submit', function (e) {
     e.preventDefault();
     var id = $('#show-id').val();
     tttapi.showGame(id, token, callback);
   });
 
-  $('#join-game').on('submit', function(e) {
+  $('#join-game').on('submit', function (e) {
     e.preventDefault();
     var id = $('#join-id').val();
     tttapi.joinGame(id, new FormData(), token, callback);
   });
 
-  $('#mark-cell').on('submit', function(e) {
+  $('#mark-cell').on('submit', function (e) {
     e.preventDefault();
     var id = $(e.target).find('[name="id"]').val();
     let data = new FormData(e.target);
     tttapi.markCell(id, data, token, callback);
   });
 
-  $('#watch-game').on('submit', function(e) {
-    var token = $(this).children('[name="token"]').val();
+  $('#watch-game').on('submit', function (e) {
     var id = $('#watch-id').val();
     e.preventDefault();
 
     var gameWatcher = tttapi.watchGame(id, token);
 
-    gameWatcher.on('change', function(data) {
-      var parsedData = JSON.parse(data);
-      if (data.timeout) { //not an error
-        this.gameWatcher.close();
-        return console.warn(data.timeout);
-      }
+    gameWatcher.on('change', function (data) {
+      console.log(data);
+      if (data.game && data.game.cells) {
+        const diff = changes => {
+          let before = changes[0];
+          let after = changes[1];
+          for (let i = 0; i < after.length; i++) {
+            if (before[i] !== after[i]) {
+              return {
+                index: i,
+                value: after[i],
+              };
+            }
+          }
 
-      var gameData = parsedData.game;
-      var cell = gameData.cell;
-      $('#watch-index').val(cell.index);
-      $('#watch-value').val(cell.value);
+          return { index: -1, value: '' };
+        };
+
+        let cell = diff(data.game.cells);
+        $('#watch-index').val(cell.index);
+        $('#watch-value').val(cell.value);
+      } else if (data.timeout) { //not an error
+        gameWatcher.close();
+      }
     });
-    gameWatcher.on('error', function(e) {
+
+    gameWatcher.on('error', function (e) {
       console.error('an error has occured with the stream', e);
     });
+
   });
 
 });
